@@ -97,7 +97,7 @@ public class TimetableController : MonoBehaviour
 
     private void Update()
     {
-        if (_elapsedUpdateTime > UpdateRate)
+        if (_elapsedUpdateTime >= UpdateRate)
         {
             _elapsedUpdateTime = 0;
 
