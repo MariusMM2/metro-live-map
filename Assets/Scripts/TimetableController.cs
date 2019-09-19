@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +20,7 @@ public class TimetableController : MonoBehaviour
 
     private IEnumerable<Departure> _departures;
 
-//    private string _text;
+    private string _text;
     public Text textLeft;
     public Text textRight;
     private volatile bool _departuresLock;
@@ -37,9 +37,10 @@ public class TimetableController : MonoBehaviour
 
         while (true)
         {
+//            Time.Update();
             controller.Update();
-//            Console.WriteLine(controller._text);
-            Thread.Sleep(500);
+            Console.WriteLine(controller._text);
+            Thread.Sleep(1000);
         }
 
         // ReSharper disable once FunctionNeverReturns
@@ -50,16 +51,16 @@ public class TimetableController : MonoBehaviour
     {
         if (stationId < 8600000)
         {
-            Debug.LogWarningFormat("Potentially invalid StationId ('{0}') found at '{1}'. Disabling script.", stationId,
-                gameObject.name);
+            Debug.LogWarning(
+                $"Potentially invalid StationId ('{stationId}') found at '{gameObject.name}'. Disabling script.");
             enabled = false;
+//            Debug.LogWarning($"Potentially invalid StationId ('{stationId}'). Disabling script.");
         }
     }
 
     private void Start()
     {
         Debug.Log("Retrieving departure board");
-//        Console.WriteLine("Retrieving departure board");
 
         _retrieveThreadStopFlag = false;
         _elapsedUpdateTime = UpdateRate;
@@ -71,7 +72,6 @@ public class TimetableController : MonoBehaviour
                 if (_retrieveThreadStopFlag)
                 {
                     Debug.Log("Retrieve Thread: Stopping...");
-//                    Console.WriteLine("Retrieve Thread: Stopping...");
                     break;
                 }
 
@@ -113,7 +113,6 @@ public class TimetableController : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log("Stopping Retrieve thread.");
-//        Console.WriteLine("Stopping Retrieve thread.");
         _retrieveThreadStopFlag = true;
     }
 
@@ -131,14 +130,12 @@ public class TimetableController : MonoBehaviour
         var request = WebRequest.Create(url);
 
         var response = (HttpWebResponse) request.GetResponse();
-        Debug.Log(response.StatusCode);
-//        Console.WriteLine(response.StatusCode);
+        Debug.Log(response.StatusCode.ToString());
 
         var dataStream = response.GetResponseStream();
         var reader = new StreamReader(dataStream ?? throw new NullReferenceException());
         var responseFromServer = reader.ReadToEnd();
         Debug.Log(responseFromServer);
-//        Console.WriteLine(responseFromServer);
 
         reader.Close();
         dataStream.Close();
@@ -167,7 +164,6 @@ public class TimetableController : MonoBehaviour
 
         foreach (var departureItem in _departures)
         {
-//            string targetText = null;
             Text targetText;
             switch (departureItem.track)
             {
