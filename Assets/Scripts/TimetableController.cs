@@ -161,7 +161,7 @@ public class TimetableController : MonoBehaviour
 
             var timeSpan = arrival - now;
 
-            if (timeSpan.TotalSeconds <= 0) continue;
+            if (timeSpan.TotalSeconds <= -30) continue;
 
             var minutesLeft = timeSpan.TotalSeconds / 60f;
 
@@ -181,7 +181,6 @@ public class TimetableController : MonoBehaviour
             var displayText = targetText == textRight
                 ? $"{departureItem.name} ({departureItem.direction}) - {minutesLeftString}\n"
                 : $"{minutesLeftString} - {departureItem.name} ({departureItem.direction})\n";
-//                : $"{minutesLeftString}({minutesLeft:#.##}) - {departureItem.name} ({departureItem.direction})\n";
 
             if (targetText != null)
                 targetText.text += displayText;
