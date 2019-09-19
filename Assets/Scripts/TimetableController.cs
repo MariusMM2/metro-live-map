@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -183,7 +183,7 @@ public class TimetableController : MonoBehaviour
             }
 
             // L: 1min - Metro M1 (Lufthavnen)
-            // R: Metro M1 (Vanlose) - 1min
+            // R: Metro M1 (Vanløse) - 1min
             var arrival = new DateTime(time.Year, time.Month, time.Day,
                 int.Parse(departureItem.time.Substring(0, departureItem.time.IndexOf(':'))),
                 int.Parse(departureItem.time.Substring(departureItem.time.IndexOf(':') + 1)), 0);
