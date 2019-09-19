@@ -28,7 +28,7 @@ public class TimetableController : MonoBehaviour
     private float _elapsedUpdateTime;
 
     // ReSharper disable once UnusedMember.Global
-    public static void Main(string[] args)
+    public static void Main()
     {
         // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
         var controller = new TimetableController {stationId = 8603307};
@@ -213,6 +213,7 @@ public class TimetableController : MonoBehaviour
                 ? $"{departureItem.name} ({departureItem.direction}) - {minutesLeftString}\n"
                 : $"{minutesLeftString} - {departureItem.name} ({departureItem.direction})\n";
 
+            // ReSharper disable once PossibleNullReferenceException
             targetText.text += displayText;
 
 //            _text += displayText;
