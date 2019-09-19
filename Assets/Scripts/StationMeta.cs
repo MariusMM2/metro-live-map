@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+// ReSharper disable UnusedMember.Global
 
 public static class StationMeta
 {
@@ -23,6 +24,7 @@ public static class StationMeta
             Lufthavnen = "Lufthavnen";
     }
 
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct MetroLine
     {
         public string To,
@@ -32,6 +34,7 @@ public static class StationMeta
 
     public struct DepartureBoardJsonContainer
     {
+        // ReSharper disable once UnassignedField.Global
         public DepartureBoard DepartureBoard;
     }
 
@@ -41,11 +44,13 @@ public static class StationMeta
         public string noNamespaceSchemaLocation;
 
         // ReSharper disable once MemberHidesStaticFromOuterClass
+        // ReSharper disable once UnassignedField.Global
         public Departure[] Departure;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    [SuppressMessage("ReSharper", "UnassignedField.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public struct Departure
     {
         public string name,
