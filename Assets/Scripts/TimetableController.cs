@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
@@ -153,8 +153,7 @@ public class TimetableController : MonoBehaviour
 
         var contents = JsonConvert.DeserializeObject<DepartureBoardJsonContainer>(jsonContent);
 
-        return Array.FindAll(contents.DepartureBoard.Departure,
-            departure => ((IList) MetroNames).Contains(departure.name));
+        return contents.DepartureBoard.Departure.Where(departure => MetroNames.Contains(departure.name));
     }
 
     private void PrintTimes()
