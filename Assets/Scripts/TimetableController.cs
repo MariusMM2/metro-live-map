@@ -15,7 +15,7 @@ using UnityEngine.UI;
 public class TimetableController : MonoBehaviour
 {
     private const int RetrieveRate = 60 * 1000;
-    public int StationId;
+    public int stationId;
 
     private IEnumerable<Departure> _departures;
 
@@ -24,9 +24,11 @@ public class TimetableController : MonoBehaviour
     public Text textRight;
     private volatile bool _departuresLock;
 
+    // ReSharper disable once UnusedMember.Global
     public static void Main(string[] args)
     {
-        var controller = new TimetableController {StationId = 8603307};
+        // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
+        var controller = new TimetableController {stationId = 8603307};
         controller.Awake();
         controller.Start();
 
@@ -43,9 +45,9 @@ public class TimetableController : MonoBehaviour
 
     private void Awake()
     {
-        if (StationId < 8600000)
+        if (stationId < 8600000)
         {
-            Debug.LogWarningFormat("Potentially invalid StationId ('{0}') found at '{1}'. Disabling script.", StationId,
+            Debug.LogWarningFormat("Potentially invalid StationId ('{0}') found at '{1}'. Disabling script.", stationId,
                 gameObject.name);
             enabled = false;
         }
@@ -89,7 +91,7 @@ public class TimetableController : MonoBehaviour
         var dateTime = DateTime.Now;
 
         var url = "http://xmlopen.rejseplanen.dk/bin/rest.exe/departureBoard" +
-                  $"?id={StationId}" +
+                  $"?id={stationId}" +
                   $"&date={dateTime.Day}.{dateTime.Month}.{dateTime.Year}" +
                   $"&time={dateTime.Hour}:{dateTime.Minute}" +
                   "&useTog=0&useBus=0&format=json";
