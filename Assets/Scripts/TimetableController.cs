@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -11,7 +12,7 @@ using static StationMeta;
 
 #pragma warning disable 649
 
-//public class TimetableController
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class TimetableController : MonoBehaviour
 {
     private const float RetrieveRate = 60f;
@@ -20,7 +21,6 @@ public class TimetableController : MonoBehaviour
 
     private IEnumerable<Departure> _departures;
 
-    private string _text;
     public Text textLeft;
     public Text textRight;
     private volatile bool _departuresLock;
@@ -31,7 +31,11 @@ public class TimetableController : MonoBehaviour
     public static void Main()
     {
         // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
-        var controller = new TimetableController {stationId = 8603307};
+        var controller = new TimetableController {stationId = 8603307, 
+//            textLeft = new Text(), 
+//            textRight = new Text()
+        };
+
         controller.Awake();
         controller.Start();
 
@@ -39,10 +43,10 @@ public class TimetableController : MonoBehaviour
         {
 //            Time.Update();
             controller.Update();
-            Console.WriteLine(controller._text);
+            Debug.Log(controller.textLeft.text);
+            Debug.Log(controller.textRight.text);
             Thread.Sleep(1000);
         }
-
         // ReSharper disable once FunctionNeverReturns
     }
 
@@ -158,7 +162,6 @@ public class TimetableController : MonoBehaviour
     {
         var time = DateTime.Now;
 
-//        _text = "";
         textLeft.text = "";
         textRight.text = "";
 
@@ -203,15 +206,12 @@ public class TimetableController : MonoBehaviour
 
             minutesLeftString += $"({minutesLeft:#.##})";
 
-//            var displayText = false
             var displayText = targetText == textRight
                 ? $"{departureItem.name} ({departureItem.direction}) - {minutesLeftString}\n"
                 : $"{minutesLeftString} - {departureItem.name} ({departureItem.direction})\n";
 
             // ReSharper disable once PossibleNullReferenceException
             targetText.text += displayText;
-
-//            _text += displayText;
         }
     }
 }
