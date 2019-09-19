@@ -14,7 +14,8 @@ using static StationMeta;
 //public class TimetableController
 public class TimetableController : MonoBehaviour
 {
-    private const int RetrieveRate = 60 * 1000;
+    private const float RetrieveRate = 60f;
+    private const float UpdateRate = 10f;
     public int stationId;
 
     private IEnumerable<Departure> _departures;
@@ -23,6 +24,8 @@ public class TimetableController : MonoBehaviour
     public Text textLeft;
     public Text textRight;
     private volatile bool _departuresLock;
+    private bool _retrieveThreadStopFlag;
+    private float _elapsedUpdateTime;
 
     // ReSharper disable once UnusedMember.Global
     public static void Main(string[] args)
@@ -58,10 +61,20 @@ public class TimetableController : MonoBehaviour
         Debug.Log("Retrieving departure board");
 //        Console.WriteLine("Retrieving departure board");
 
+        _retrieveThreadStopFlag = false;
+        _elapsedUpdateTime = UpdateRate;
+
         var retrieveThread = new Thread(() =>
         {
             while (true)
             {
+                if (_retrieveThreadStopFlag)
+                {
+                    Debug.Log("Retrieve Thread: Stopping...");
+//                    Console.WriteLine("Retrieve Thread: Stopping...");
+                    break;
+                }
+
                 _departuresLock = true;
 
                 Thread.Sleep(1000);
@@ -70,7 +83,7 @@ public class TimetableController : MonoBehaviour
                 _departures = GetTrains(departures);
                 _departuresLock = false;
 
-                Thread.Sleep(RetrieveRate);
+                Thread.Sleep((int) (RetrieveRate * 1000));
             }
 
             // ReSharper disable once FunctionNeverReturns
@@ -81,9 +94,27 @@ public class TimetableController : MonoBehaviour
 
     private void Update()
     {
-        if (_departuresLock || _departures == null) return;
+        if (_elapsedUpdateTime > UpdateRate)
+        {
+            _elapsedUpdateTime = 0;
 
-        PrintTimes();
+            if (_departuresLock || _departures == null)
+            {
+                _elapsedUpdateTime = UpdateRate;
+                return;
+            }
+
+            PrintTimes();
+        }
+        else
+            _elapsedUpdateTime += Time.deltaTime;
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("Stopping Retrieve thread.");
+//        Console.WriteLine("Stopping Retrieve thread.");
+        _retrieveThreadStopFlag = true;
     }
 
     private string RetrieveDepartures()
@@ -182,8 +213,7 @@ public class TimetableController : MonoBehaviour
                 ? $"{departureItem.name} ({departureItem.direction}) - {minutesLeftString}\n"
                 : $"{minutesLeftString} - {departureItem.name} ({departureItem.direction})\n";
 
-            if (targetText != null)
-                targetText.text += displayText;
+            targetText.text += displayText;
 
 //            _text += displayText;
         }
