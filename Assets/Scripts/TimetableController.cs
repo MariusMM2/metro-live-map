@@ -169,13 +169,12 @@ public class TimetableController : MonoBehaviour
         {
 //            string targetText = null;
             Text targetText;
-            switch (departureItem.direction)
+            switch (departureItem.track)
             {
-                case Direction.Lufthavnen:
-                case Direction.Vestamager:
+                case "1":
                     targetText = textLeft;
                     break;
-                case Direction.Vanløse:
+                case "2":
                     targetText = textRight;
                     break;
                 default:

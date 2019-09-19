@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 public static class StationMeta
 {
