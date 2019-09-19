@@ -31,7 +31,9 @@ public class TimetableController : MonoBehaviour
     public static void Main()
     {
         // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
-        var controller = new TimetableController {stationId = 8603307, 
+        var controller = new TimetableController
+        {
+            stationId = 8603307,
 //            textLeft = new Text(), 
 //            textRight = new Text()
         };
@@ -47,6 +49,7 @@ public class TimetableController : MonoBehaviour
             Debug.Log(controller.textRight.text);
             Thread.Sleep(1000);
         }
+
         // ReSharper disable once FunctionNeverReturns
     }
 
@@ -71,14 +74,8 @@ public class TimetableController : MonoBehaviour
 
         var retrieveThread = new Thread(() =>
         {
-            while (true)
+            while (!_retrieveThreadStopFlag)
             {
-                if (_retrieveThreadStopFlag)
-                {
-                    Debug.Log("Retrieve Thread: Stopping...");
-                    break;
-                }
-
                 _departuresLock = true;
 
                 Thread.Sleep(1000);
@@ -89,6 +86,8 @@ public class TimetableController : MonoBehaviour
 
                 Thread.Sleep((int) (RetrieveRate * 1000));
             }
+
+            Debug.Log("Retrieve Thread: Stopping...");
 
             // ReSharper disable once FunctionNeverReturns
         });
