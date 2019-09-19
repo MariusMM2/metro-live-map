@@ -4,34 +4,27 @@
 
     public static readonly MetroLine[] M1 =
     {
-        new MetroLine(Direction.Vanløse, Direction.Vestamager, "M1"),
-        new MetroLine(Direction.Vestamager, Direction.Vanløse, "M1")
+        new MetroLine {To = Direction.Vanløse, From = Direction.Vestamager, Name = "M1"},
+        new MetroLine {To = Direction.Vestamager, From = Direction.Vanløse, Name = "M1"}
     };
 
     public static readonly MetroLine[] M2 =
     {
-        new MetroLine(Direction.Vanløse, Direction.Lufthavnen, "M2"),
-        new MetroLine(Direction.Lufthavnen, Direction.Vanløse, "M2")
+        new MetroLine {To = Direction.Vanløse, From = Direction.Lufthavnen, Name = "M2"},
+        new MetroLine {To = Direction.Lufthavnen, From = Direction.Vanløse, Name = "M2"}
     };
 
     public static class Direction
     {
-        public const string Vanløse = "Vanløse";
-        public const string Vestamager = "Vestamager";
-        public const string Lufthavnen = "Lufthavnen";
+        public const string Vanløse = "Vanløse",
+            Vestamager = "Vestamager",
+            Lufthavnen = "Lufthavnen";
     }
 
-    public class MetroLine
+    public struct MetroLine
     {
-        public string To { get; }
-        public string From { get; }
-        public string Name { get; }
-
-        public MetroLine(string to, string from, string name)
-        {
-            To = to;
-            From = from;
-            Name = name;
-        }
+        public string To,
+            From,
+            Name;
     }
 }
