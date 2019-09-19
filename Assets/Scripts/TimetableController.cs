@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
+using static StationMeta;
 
 #pragma warning disable 649
 
@@ -123,7 +123,7 @@ public class TimetableController : MonoBehaviour
         var contents = JsonConvert.DeserializeObject<DepartureBoardJsonContainer>(jsonContent);
 
         return Array.FindAll(contents.DepartureBoard.Departure,
-            departure => ((IList) StationMeta.MetroNames).Contains(departure.name));
+            departure => ((IList) MetroNames).Contains(departure.name));
     }
 
     private void PrintTimes()
@@ -140,11 +140,11 @@ public class TimetableController : MonoBehaviour
             Text targetText;
             switch (departureItem.direction)
             {
-                case StationMeta.Direction.Lufthavnen:
-                case StationMeta.Direction.Vestamager:
+                case Direction.Lufthavnen:
+                case Direction.Vestamager:
                     targetText = textLeft;
                     break;
-                case StationMeta.Direction.Vanløse:
+                case Direction.Vanløse:
                     targetText = textRight;
                     break;
                 default:
@@ -186,43 +186,6 @@ public class TimetableController : MonoBehaviour
                 targetText.text += displayText;
 
 //            _text += displayText;
-        }
-    }
-
-    private struct DepartureBoardJsonContainer
-    {
-        public DepartureBoard DepartureBoard;
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    private struct DepartureBoard
-    {
-        public string noNamespaceSchemaLocation;
-
-        // ReSharper disable once MemberHidesStaticFromOuterClass
-        public Departure[] Departure;
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
-    private struct Departure
-    {
-        public string name;
-        public string type;
-        public string stop;
-        public string time;
-        public string date;
-        public string id;
-        public string line;
-        public string messages;
-        public string track;
-        public string finalStop;
-        public string direction;
-
-        public override string ToString()
-        {
-            return $"{{name: {name}, type: {type}, stop: {stop}, time: {time}, track: {track}, " +
-                   $"direction: {direction}}}";
         }
     }
 }

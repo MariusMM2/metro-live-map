@@ -1,4 +1,6 @@
-﻿public static class StationMeta
+﻿using System.Diagnostics.CodeAnalysis;
+
+public static class StationMeta
 {
     public static readonly string[] MetroNames = {"Metro M1", "Metro M2"};
 
@@ -26,5 +28,42 @@
         public string To,
             From,
             Name;
+    }
+
+    public struct DepartureBoardJsonContainer
+    {
+        public DepartureBoard DepartureBoard;
+    }
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public struct DepartureBoard
+    {
+        public string noNamespaceSchemaLocation;
+
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        public Departure[] Departure;
+    }
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    public struct Departure
+    {
+        public string name,
+            type,
+            stop,
+            time,
+            date,
+            id,
+            line,
+            messages,
+            track,
+            finalStop,
+            direction;
+
+        public override string ToString()
+        {
+            return $"{{name: {name}, type: {type}, stop: {stop}, time: {time}, track: {track}, " +
+                   $"direction: {direction}}}";
+        }
     }
 }
