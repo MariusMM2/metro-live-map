@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
 using static StationMeta;
@@ -13,50 +9,24 @@ using static StationMeta;
 #pragma warning disable 649
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public class TimetableController : MonoBehaviour
+public class TimetableController : MonoBehaviour, IObserver<List<Departure>>
 {
-    private const float RetrieveRate = 60f;
     private const float UpdateRate = 10f;
     public int stationId;
 
-    private IEnumerable<Departure> _departures;
-
     public Text textLeft;
     public Text textRight;
-    private volatile bool _departuresLock;
-    private bool _retrieveThreadStopFlag;
-    private float _elapsedUpdateTime;
 
-    // ReSharper disable once UnusedMember.Global
-    public static void Main()
-    {
-        // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
-        var controller = new TimetableController
-        {
-            stationId = 8603307,
-//            textLeft = new Text(), 
-//            textRight = new Text()
-        };
+    private volatile List<Departure> _departures;
 
-        controller.Awake();
-        controller.Start();
+    private TimetableRetriever _retriever;
+    private IDisposable _subscription;
 
-        while (true)
-        {
-//            Time.Update();
-            controller.Update();
-            Debug.Log(controller.textLeft.text);
-            Debug.Log(controller.textRight.text);
-            Thread.Sleep(1000);
-        }
-
-        // ReSharper disable once FunctionNeverReturns
-    }
-
+    private volatile float _elapsedUpdateTime;
 
     private void Awake()
     {
-        if (stationId < 8600000)
+        if (!StationIds.Contains(stationId))
         {
             Debug.LogWarning(
                 $"Potentially invalid StationId ('{stationId}') found at '{gameObject.name}'. Disabling script.");
@@ -69,43 +39,16 @@ public class TimetableController : MonoBehaviour
     {
         Debug.Log("Retrieving departure board");
 
-        _retrieveThreadStopFlag = false;
-        _elapsedUpdateTime = UpdateRate;
+        _retriever = transform.parent.gameObject.GetComponent<TimetableRetriever>();
 
-        var retrieveThread = new Thread(() =>
-        {
-            while (!_retrieveThreadStopFlag)
-            {
-                _departuresLock = true;
-
-                Thread.Sleep(1000);
-
-                var departures = RetrieveDepartures();
-                _departures = GetTrains(departures);
-                _departuresLock = false;
-
-                Thread.Sleep((int) (RetrieveRate * 1000));
-            }
-
-            Debug.Log("Retrieve Thread: Stopping...");
-
-            // ReSharper disable once FunctionNeverReturns
-        });
-
-        retrieveThread.Start();
+        _subscription = _retriever.Subscribe(this);
     }
 
     private void Update()
     {
-        if (_elapsedUpdateTime >= UpdateRate)
+        if (_elapsedUpdateTime >= UpdateRate && _departures != null)
         {
             _elapsedUpdateTime = 0;
-
-            if (_departuresLock || _departures == null)
-            {
-                _elapsedUpdateTime = UpdateRate;
-                return;
-            }
 
             PrintTimes();
         }
@@ -115,45 +58,7 @@ public class TimetableController : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("Stopping Retrieve thread.");
-        _retrieveThreadStopFlag = true;
-    }
-
-    private string RetrieveDepartures()
-    {
-        var dateTime = DateTime.Now;
-
-        var url = "http://xmlopen.rejseplanen.dk/bin/rest.exe/departureBoard" +
-                  $"?id={stationId}" +
-                  $"&date={dateTime.Day}.{dateTime.Month}.{dateTime.Year}" +
-                  $"&time={dateTime.Hour}:{dateTime.Minute}" +
-                  "&useTog=0&useBus=0&format=json";
-
-        Debug.Log($"URL: {url}");
-        var request = WebRequest.Create(url);
-
-        var response = (HttpWebResponse) request.GetResponse();
-        Debug.Log(response.StatusCode.ToString());
-
-        var dataStream = response.GetResponseStream();
-        var reader = new StreamReader(dataStream ?? throw new NullReferenceException());
-        var responseFromServer = reader.ReadToEnd();
-        Debug.Log(responseFromServer);
-
-        reader.Close();
-        dataStream.Close();
-        response.Close();
-
-        return responseFromServer;
-    }
-
-    private static IEnumerable<Departure> GetTrains(string departures)
-    {
-        var jsonContent = departures;
-
-        var contents = JsonConvert.DeserializeObject<DepartureBoardJsonContainer>(jsonContent);
-
-        return contents.DepartureBoard.Departure.Where(departure => MetroNames.Contains(departure.name));
+        _subscription.Dispose();
     }
 
     private void PrintTimes()
@@ -210,6 +115,27 @@ public class TimetableController : MonoBehaviour
 
             // ReSharper disable once PossibleNullReferenceException
             targetText.text += displayText;
+        }
+    }
+
+    public void OnCompleted()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnError(Exception error)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnNext(List<Departure> value)
+    {
+        var departures = value.Where(departure => departure.id.Equals(stationId.ToString())).ToList();
+
+        if (departures.Any())
+        {
+            _departures = departures;
+            _elapsedUpdateTime = UpdateRate;
         }
     }
 }

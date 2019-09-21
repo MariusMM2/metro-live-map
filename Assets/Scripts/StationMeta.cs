@@ -4,6 +4,32 @@
 
 public static class StationMeta
 {
+    public static readonly int[] StationIds =
+    {
+        8603301,
+        8603302,
+        8603303,
+        8603304,
+        8603305,
+        8603306,
+        8603307,
+        8603308,
+        8603309,
+        8603310,
+        8603311,
+        8603312,
+        8603313,
+        8603315,
+        8603317,
+        8603321,
+        8603322,
+        8603323,
+        8603324,
+        8603326,
+        8603327,
+        8603328
+    };
+    
     public static readonly string[] MetroNames = {"Metro M1", "Metro M2"};
 
     public static readonly MetroLine[] M1 =
@@ -37,6 +63,12 @@ public static class StationMeta
     {
         // ReSharper disable once UnassignedField.Global
         public DepartureBoard DepartureBoard;
+    }
+
+    public struct MultiDepartureBoardJsonContainer
+    {
+        // ReSharper disable once UnassignedField.Global
+        public DepartureBoard MultiDepartureBoard;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
