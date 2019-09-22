@@ -58,7 +58,7 @@ public class TimetableController : MonoBehaviour, IObserver<List<Departure>>
 
     private void OnDestroy()
     {
-        _subscription.Dispose();
+        _subscription?.Dispose();
     }
 
     private void PrintTimes()
