@@ -61,18 +61,6 @@ public class TimetableRetriever : MonoBehaviour, IObservable<List<Departure>>
             _elapsedUpdateTime += Time.deltaTime;
     }
 
-    public IEnumerable<Departure> GetDepartures(int stationId)
-    {
-        if (!StationIds.Contains(stationId))
-        {
-            var message = $"Attempted to retrieve departures for invalid StationId ('{stationId}')";
-            Debug.LogWarning(message);
-            throw new ArgumentException(message);
-        }
-
-        return _departures.Where(departure => departure.id.Equals(stationId.ToString()));
-    }
-
     private async Task GetDepartureBoard(string url)
     {
         var dataStream = await _httpClient.GetStreamAsync(url);
