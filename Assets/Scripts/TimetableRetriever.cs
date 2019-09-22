@@ -21,12 +21,16 @@ public class TimetableRetriever : MonoBehaviour, IObservable<List<Departure>>
     private float _elapsedUpdateTime;
     private readonly HttpClient _httpClient = new HttpClient();
 
-    // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         _elapsedUpdateTime = RetrieveRate;
         _departures = new List<Departure>();
         _observers = new List<IObserver<List<Departure>>>();
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
     }
 
     // Update is called once per frame
